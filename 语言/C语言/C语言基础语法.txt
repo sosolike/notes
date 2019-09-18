@@ -917,14 +917,14 @@
                     int const * const pointer
 
 十三：为数据类型定义别名：
-    C语言中可以通过typedef 数据类型名称 newname的方式来为特定的数据类型定义别名；
-    1：为基本数据类型定义别名：
+    C语言中可以通过typedef 数据类型名称 newname的方式来为特定的数据类型定义别名，主要可以更方便的对程序进行书写；
+    1：为基本数据类型定义别名(整数，浮点数，字符类型)：
         如：声明：typedef int INTEGER;  那么INTEGER就代表int类型的数据
             使用：INTEGER 1;            等价于int i;
-    2：为数组类型定义别名：
+    2：为指针、数组类型定义别名：
         如：声明：typedef char newname[20];  那么newname就等同于一个char类型长度为20的数组；
             使用：newname a1,a2;             等价于char a1[20],a2[20]
-    3：为结构体定义别名：
+    3：为共用体、结构体定义别名：
         如：声明：typedef struct stu{
                     char  *name;
                     short age;

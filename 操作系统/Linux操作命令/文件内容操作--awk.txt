@@ -54,7 +54,6 @@ awk语法：
             2：自定义变量：
                 1：定义方式：
                     变量名=变量值     
-                    
                 2：定义位置即作用域：
                     在BEGIN模式中定义，可以在定义之后的BEGIN代码块中、condition代码块中、END代码块中使用；
                     在condition中定义，可以在定义之后的condition代码块中、END代码块中使用；
@@ -72,7 +71,131 @@ awk语法：
                         #需要在awk命令之后使用-v参数获取;如：awk -v iv=$out_var 'BEGIN {pint iv}  {print iv} END {print iv}' ./t.txt
                       使用区域：
                         可以在BEGIN、condition、END中使用；
+        2：awk中的流程控制：
+            1：条件判断语句：
+                if(表达式)
+                {
+                    语句1;
+                }
+                else if(表达式)
+                {
+                    语句2;
+                }
+                else
+                {
+                    语句3;
+                }
+            2：循环语句：
+                1：while循环：
+                    while(表达式)
+                    {
+                        语句;
+                    }
+                    如：
+                        while(i<10)
+                        {
+                            print i;
+                        }
+                2：for循环
+                    for(变量 in 数组)
+                    {
+                        语句;
+                    }
+                    如：
+                        for(i in ENVIRON)
+                        {
+                            print i"="ENVIRON[i];
+                        }
+                    或者：
+                    for(变量;条件;表达式)
+                    {
+                        语句;
+                    }
+                    如：
+                        for(i=0;i<10;i++)
+                        {
+                            print i;
+                        }
+                3：do循环:
+                    do
+                    {
+                        语句;
+                    }while(条件)
+                    如：
+                        do
+                        {
+                            print i;
+                        }while(i<10)
+                4：循环语句的退出：
+                    break：退出当前循环，执行循环之后的内容
+                    continue：结束当前循环，开始新一轮循环；
+                    next：结束当前处理程序，读取下一行内容，重新执行condition中的处理程序；
+                    exit：结束condition程序，进入END中执行END中的程序，如果没有定义END，那么结束执行本次脚本；
+                
+        3：awk中的运算符：
+            1：算术运算：
+                1：运算符：+ - * / % & ++ --；
+                2：备注：使用算术运算时，操作数自动会转为数值，所有非数值会转换为0；
+            2：赋值运算：
+                1：运算符：= += -= *= /= %=
+            3：逻辑运算：
+                1：运算符：|| && !
+            4：关系运算： 
+                1：运算符：< <= > >= == !=
+        
+        4：awk中的数组：
+            1：awk中的数组是关联索引数组，数组下标既可以是数字也可以是字符串
+            2：awk中的数组使用之前不必声明，可以直接使用；
+            3：数组的定义方式：
+                array_name[1]="first_value"
+                array_name[2]="second_value"
+                或者：
+                array_name["first"]="first_value"
+                array_name["second"] = "second_value"
+            4：数组相关函数：
+                1：将字符串分割为数组：
+                    split(str_var,array_var,split_tag)
+                    功能：将字符串str_var使用split_tag分隔符分割至array_var中；
+                    参数：str_var：字符串变量名或者字符串
+                         array_var：数组变量名或者数组
+                         split_tag：分隔符
+                    返回值：返回数组长度；
+                2：获取数组长度：
+                    length(array_var)
+                    功能：获取数组长度
+                    参数：array_var：数组变量名
+                    返回值：返回数组长度；
+                3：检测键是否存在：
+                    'key' in array_var
+                    说明：不能使用array_var["key"]来检测键是否存在，在awk中，使用array_var["key"]时，将会自动创建名为key的键；其值为空；
+                4：删除数组键：
+                    delete array_var["key"]
+                5：二维数组：
+                    1：awk的二维数组在存储上仍然是一维数组，awk提供的二维数组仅仅只是逻辑上模拟的二维数组；
+                    2：二维数组定义方式：
+                        array_var[一维键值,二维键值]=值
+                        如：
+                            array_var[1,2]=3
+                    3：二维数组的访问方式：
+                        array_var[一维键值,二维键值]=值
+                        如：
+                            array_var[1,2]
+                    4：二维数组的遍历方式：for(item in array_var)；
+                        item是一维值和二维值通过\034连接起来的字符串，需要使用split分割之后得到一维坐标和二维坐标；
+            5：数组遍历：
+                1：如果数组本下标无序；使用for item in array遍历出来的是无序数组；如果需要使用有序数组，可使用for(i=0;i<10;i<++)来实现；
+                2：对于awk3.1版本可以先使用asort或者asorti对数组进行排序，然后遍历：
+                    asort(原数组名,排序之后的数组名);asort对数组排序仅仅只会对值排序，会丢掉原先的键；
+                    asorti(原数组名，排序之后的数组名);asorti可以对键值整体进行排序；不会丢掉原先的键；
+                
+        5：awk中的字符串：
+            1：awk中的字符串使用""来创建；
+            2：字符串转数字：通过对字符串进行算术运算，字符串将会自动转换为整数，发现字符串第一个非数字字符将会立即停止转换；
+            3：字符串转数组：split(str_var,arr_var,split_tag);使用split函数将字符串使用特定的分隔符分割为一个数组；
+            4：数字砖字符串：awk中使用""将两个数字连接为一个字符串；
+            5：字符连接操作：使用"+"或者""连接两个字符串；
 
+        
 
 
 

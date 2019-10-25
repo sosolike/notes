@@ -94,8 +94,99 @@ C语言中的文件：
                     1：该函数在读取到n-1个字符之前，如果出现了换行，或者读取到了文件末尾，则读取结束；因此无论n值有多大，最多只能读取一行的数据，不能跨行；
                     2：C语言中没有按行读取的函数，可以借助fgets()将n设置的足够大，那么就可读取到一行的数据；
             2：向文件中写入字符串：
+                int fputs(char *str,FILE *fp);
+                功能：向文件中写入字符串；
+                参数：str：要写入的字符串
+                     fp：文件打开之后返回的FILE结构体变量地址；
+                返回值：写入成功，返回非负数，失败返回EOF；
+
+        4：按照数据块操作文件：
+            1：从文件中读取指定字节个数的数据：
+                size_t fread(void *ptr,size_t size,size_t count,FILE *fp)
+                功能：从文件中读取指定字节数的数据；
+                参数：ptr：内存区块的指针，可以是数组、结构体、变量等；ptr用来存放读取到的数据；
+                     size：表示一个数据块的字节数；
+                     count：表示要读的数据块的块数；
+                     fp：文件打开之后返回的FILE结构体变量地址；
+                返回值：返回成功读取的块数，即count值，如果返回值小于参数中的count值，则有可能发生了错误，也有可能已经到了文件末尾，需要通过ferror()活着feof()检测；
+                备注： 
+                    1：该函数每次最多读取size*count个字节的数据；
+                    2：size_t是在stdio.h和stdlib.h头文件中使用typedef 定义的数据类型，表示无符号整数；常用来表示数量；
+
+            2：向文件中写入指定字节数的数据：
+                size_t fwrite(void * ptr,size_t size,size_t count,FILE *fp)
+                功能：向文件中写入指定字节数的数据
+                参数：ptr：内存区块的指针，可以是数组、结构体、变量等；ptr指向的是待写入的数据；
+                     size：表示每一个区块的字节数
+                     count：表示需要写入的块数
+                     fp：表示文件打开之后返回的FILE结构体变量地址；
+                返回值：返回成功写入的块数，如果返回值小于参数中的count，那么写入过程一定发生了错误；
+                备注： 
+                    1：该函数每次写入size*count个字节的数据；
+        5：文件指针位置操作：
+            1：重置文件指针位置指向文件开头(rewind)：
+                void rewind(FILE *stream)
+                功能：重置文件指针位置至文件开头
+                参数：stream：文件打开之后返回的FILE结构体变量地址；
+            
+            2：获取文件指针位置(ftell)：
+                long int ftell(FILE *stream)
+                功能：获取当前文件指针位置，即当前文件指针距离文件开头的字节数；
+                参数：stream：文件打开之后返回的FILE结构体变量地址；
+                返回值：返回当前文件指针位置，距离文件开头的字节数；由于返回的是一个long型数据，因此该函数对作用的文件长度有限制；
+            
+            3：修改文件指针位置(fseek)：
+                int fseek(FILE *stream,long int offset,int whence)
+                功能：修改当前文件指针位置；
+                参数：stream：打开文件之后返回的FILE结构体变量地址
+                     offset：相对whence的偏移量，以字节为单位；
+                     whence：表示开始添加便宜offset的位置，一般为一下几种常量：
+                        SEEK_SET：文件开头
+                        SEEK_CUR：文件指针当前位置
+                        SEEK_END：文件末尾
+                返回值：如果成功返回0；如果不成功返回非0值；该函数接收的标识偏移量的参数是long型参数，因此，该函数对作用的文件长度有限制；
+            
+            4：获取文件指针位置(fgetpos)：
+                int fgetpos(FILE *stream,fpos_t *pos)
+                功能：返回当前文件的指针位置，并将其存储在fpos_t类型中；
+                参数：
+                    stream：文件打开之后返回的FILE结构体变量地址
+                    pos：fpos_t结构体的地址；
+                返回值：如果成功返回0，如果发生错误返回非0值；
+                备注： 
+                    1：该函数的作用等同于ftell，都是用来获取当前文件指针的位置；
+                    2：ftell函数以long型返回文件指针距离文件开头的字节数，fgetpos函数则将文件指针位置存储在fpost_t结构体中；
+                    3：ftell由于是long型数据表示文件指针位置，因此能够表示的文件大小有限制；fgetpos可以表示任意大小文件位置；
+                    4：对于小文件使用ftell即可获取文件指针位置；对于大型文件可以使用fgetpos获取文件指针位置；
+            5：设置文件指针位置(fsetpos)：
+                int fsetpos(FILE *stream,const fpost_t *pos)
+                功能：将文件指针位置设置为给定的位置；
+                参数：
+                    stream：文件打开之后返回的FILE结构体变量地址
+                    pos：给定的文件指针位置，必须是fpos_t类型；
+                返回值：
+                    修改成功返回0；修改失败返回非0值；
+        6：删除文件：
+            int remove(const char *filename)
+            功能：删除给定路径的文件
+            参数：
+                filename：文件路径    
+            返回值：如果删除成功返回0，删除失败返回-1；
+        7：重命名文件：
+            int rename(const char *old_filename, const char *new_filename)
+            功能：将文件名称进行重命名；
+            参数：
+                old_filename：旧文件名称
+                new_filename：新文件名称
+            返回值：如果重命名成功，返回0，如果重命名失败，返回-1；
+        
 
 
+
+        
+            
+                
+            
         
 
 
